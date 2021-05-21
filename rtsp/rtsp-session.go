@@ -18,10 +18,10 @@ import (
 	"time"
 
 	"github.com/EasyDarwin/EasyDarwin/models"
-	"github.com/penggy/EasyGoLib/db"
-	"github.com/penggy/EasyGoLib/utils"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/db"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/utils"
 
-	"github.com/teris-io/shortid"
+	"github.com/general252/EasyDarwinLib/github.com/teris-io/shortid"
 )
 
 type RTPPack struct {

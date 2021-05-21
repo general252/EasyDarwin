@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/penggy/EasyGoLib/db"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/db"
 
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-contrib/static"
-	"github.com/gin-gonic/gin"
-	"github.com/penggy/EasyGoLib/utils"
-	"github.com/penggy/cors"
-	"github.com/penggy/sessions"
-	validator "gopkg.in/go-playground/validator.v8"
+	"github.com/general252/EasyDarwinLib/github.com/gin-contrib/pprof"
+	"github.com/general252/EasyDarwinLib/github.com/gin-contrib/static"
+	"github.com/general252/EasyDarwinLib/github.com/gin-gonic/gin"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/utils"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/cors"
+	"github.com/general252/EasyDarwinLib/github.com/penggy/sessions"
+	validator "github.com/general252/EasyDarwinLib/gopkg.in/go-playground/validator.v8"
 )
 
 /**

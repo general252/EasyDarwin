@@ -1,9 +1,9 @@
 package rtsp
 
 import (
+	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/utils"
 	"sync"
 	"time"
-	"github.com/penggy/EasyGoLib/utils"
 )
 
 type Player struct {
