@@ -14,7 +14,6 @@ import (
 	"github.com/EasyDarwin/EasyDarwin/models"
 	"github.com/EasyDarwin/EasyDarwin/routers"
 	"github.com/EasyDarwin/EasyDarwin/rtsp"
-	figure "github.com/general252/EasyDarwinLib/github.com/common-nighthawk/go-figure"
 	"github.com/general252/EasyDarwinLib/github.com/penggy/EasyGoLib/utils"
 	"github.com/general252/EasyDarwinLib/github.com/penggy/service"
 )
@@ -66,18 +65,23 @@ func (p *program) StartRTSP() (err error) {
 		err = fmt.Errorf("RTSP Server Not Found")
 		return
 	}
+
 	sport := ""
 	if p.rtspPort != 554 {
 		sport = fmt.Sprintf(":%d", p.rtspPort)
 	}
+
 	link := fmt.Sprintf("rtsp://%s%s", utils.LocalIP(), sport)
 	log.Println("rtsp server start -->", link)
+
 	go func() {
 		if err := p.rtspServer.Start(); err != nil {
 			log.Println("start rtsp server error", err)
 		}
+
 		log.Println("rtsp server end")
 	}()
+
 	return
 }
 
@@ -86,6 +90,7 @@ func (p *program) StopRTSP() (err error) {
 		err = fmt.Errorf("RTSP Server Not Found")
 		return
 	}
+
 	p.rtspServer.Stop()
 	return
 }
@@ -100,16 +105,15 @@ func (p *program) Start(s service.Service) (err error) {
 		err = fmt.Errorf("RTSP port[%d] In Use", p.rtspPort)
 		return
 	}
-	err = models.Init()
-	if err != nil {
+
+	if err = models.Init(); err != nil {
 		return
 	}
-	err = routers.Init()
-	if err != nil {
+	if err = routers.Init(); err != nil {
 		return
 	}
-	p.StartRTSP()
-	p.StartHTTP()
+	_ = p.StartRTSP()
+	_ = p.StartHTTP()
 
 	if !utils.Debug {
 		log.Println("log files -->", utils.LogDir())
@@ -117,11 +121,11 @@ func (p *program) Start(s service.Service) (err error) {
 	}
 	go func() {
 		for range routers.API.RestartChan {
-			p.StopHTTP()
-			p.StopRTSP()
+			_ = p.StopHTTP()
+			_ = p.StopRTSP()
 			utils.ReloadConf()
-			p.StartRTSP()
-			p.StartHTTP()
+			_ = p.StartRTSP()
+			_ = p.StartHTTP()
 		}
 	}()
 
@@ -134,15 +138,18 @@ func (p *program) Start(s service.Service) (err error) {
 				log.Printf("find stream err:%v", err)
 				return
 			}
+
 			for i := len(streams) - 1; i > -1; i-- {
 				v := streams[i]
 				if rtsp.GetServer().GetPusher(v.CustomPath) != nil {
 					continue
 				}
+
 				agent := fmt.Sprintf("EasyDarwinGo/%s", routers.BuildVersion)
 				if routers.BuildDateTime != "" {
 					agent = fmt.Sprintf("%s(%s)", agent, routers.BuildDateTime)
 				}
+
 				client, err := rtsp.NewRTSPClient(rtsp.GetServer(), v.URL, int64(v.HeartbeatInterval)*1000, agent)
 				if err != nil {
 					continue
@@ -154,11 +161,13 @@ func (p *program) Start(s service.Service) (err error) {
 					log.Printf("Pull stream err :%v", err)
 					continue
 				}
+
 				pusher := rtsp.NewClientPusher(client)
 				rtsp.GetServer().AddPusher(pusher)
 				//streams = streams[0:i]
 				//streams = append(streams[:i], streams[i+1:]...)
 			}
+
 			time.Sleep(10 * time.Second)
 		}
 	}()
@@ -168,9 +177,11 @@ func (p *program) Start(s service.Service) (err error) {
 func (p *program) Stop(s service.Service) (err error) {
 	defer log.Println("********** STOP **********")
 	defer utils.CloseLogWriter()
-	p.StopHTTP()
-	p.StopRTSP()
+
+	_ = p.StopHTTP()
+	_ = p.StopRTSP()
 	models.Close()
+
 	return
 }
 
@@ -196,6 +207,7 @@ func main() {
 	}
 
 	httpPort := utils.Conf().Section("http").Key("port").MustInt(10008)
+
 	rtspServer := rtsp.GetServer()
 	p := &program{
 		httpPort:   httpPort,
@@ -207,10 +219,10 @@ func main() {
 		log.Println(err)
 		utils.PauseExit()
 	}
+
 	if len(tail) > 0 {
 		cmd := strings.ToLower(tail[0])
 		if cmd == "install" || cmd == "stop" || cmd == "start" || cmd == "uninstall" {
-			figure.NewFigure("EasyDarwin", "", false).Print()
 			log.Println(svcConfig.Name, cmd, "...")
 			if err = service.Control(s, cmd); err != nil {
 				log.Println(err)
@@ -220,7 +232,7 @@ func main() {
 			return
 		}
 	}
-	figure.NewFigure("EasyDarwin", "", false).Print()
+
 	if err = s.Run(); err != nil {
 		log.Println(err)
 		utils.PauseExit()

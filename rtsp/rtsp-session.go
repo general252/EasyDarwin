@@ -363,7 +363,7 @@ func (session *Session) handleRequest(req *Request) {
 	//	session.Conn.SetDeadline(time.Now().Add(time.Duration(session.Timeout) * time.Second))
 	//}
 	logger := session.logger
-	logger.Printf("<<<\n%s", req)
+	logger.Printf("<<< 收到数据\n------------------------------------\n%s\n------------------------------------\n", req)
 	res := NewResponse(200, "OK", req.Header["CSeq"], session.ID, "")
 	defer func() {
 		if p := recover(); p != nil {
@@ -371,7 +371,7 @@ func (session *Session) handleRequest(req *Request) {
 			res.StatusCode = 500
 			res.Status = fmt.Sprintf("Inner Server Error, %v", p)
 		}
-		logger.Printf(">>>\n%s", res)
+		logger.Printf(">>> 发送数据\n------------------------------------\n%s\n------------------------------------\n", res)
 		outBytes := []byte(res.String())
 		session.connWLock.Lock()
 		session.connRW.Write(outBytes)
